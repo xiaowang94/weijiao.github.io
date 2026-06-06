@@ -5,11 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>⚠️ 警告 ⚠️</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             height: 100vh;
             background: linear-gradient(45deg, #ff0000, #ffff00, #ff00ff, #00ffff, #ff0000);
@@ -30,14 +26,10 @@
             font-weight: 900;
             color: #fff;
             text-shadow: 
-                0 0 10px #ff0000,
-                0 0 20px #ff0000,
-                0 0 30px #ffff00,
-                0 0 40px #ffff00,
+                0 0 10px #ff0000, 0 0 20px #ff0000,
+                0 0 30px #ffff00, 0 0 40px #ffff00,
                 0 0 50px #ff00ff;
             animation: textDance 0.15s infinite alternate;
-            position: relative;
-            z-index: 999;
         }
         @keyframes textDance {
             0% { transform: translate(-5px, -5px) rotate(-2deg) scale(1); }
@@ -49,24 +41,40 @@
     <div class="regret-text">你太高冷了</div>
 
     <script>
-      alert("⚠️ 你已经成功触发后悔模式！点击页面任意位置播放音效 ⚠️");
+        alert("⚠️ 你已经成功触发后悔模式！");
+        
+        // 页面震动
+        let shake = 0;
+        setInterval(() => {
+            shake = shake ? 0 : 5;
+            document.body.style.margin = `${shake}px`;
+        }, 50);
 
-let shake = 0;
-setInterval(() => {
-    shake = shake ? 0 : 5;
-    document.body.style.margin = `${shake}px`;
-}, 50);
+        // 核心：静音自动播放 → 取消静音（绕开浏览器限制）
+        const audio = new Audio("1.mp3");
+        audio.loop = true;
+        audio.volume = 1;
+        audio.muted = true; // 先静音
 
-// 本地音频（你的文件名是1.mp3，直接用这个）
-const audio = new Audio("1.mp3");
-audio.loop = true;
-audio.volume = 1;
-
-// 核心：点击页面任意位置播放音频（绕过浏览器限制）
-document.body.addEventListener('click', () => {
-    audio.play();
-    alert("音效已播放！后悔来不及了😈");
-});
+        // 页面加载后立即播放，再取消静音
+        window.addEventListener('load', async () => {
+            try {
+                // 静音状态下自动播放（浏览器允许）
+                await audio.play();
+                // 播放成功后，延迟100毫秒取消静音（无感知）
+                setTimeout(() => {
+                    audio.muted = false;
+                }, 100);
+                console.log("音频已全自动播放！");
+            } catch (err) {
+                // 极端情况失败，备用方案：点击任意位置播放
+                document.body.addEventListener('click', () => {
+                    audio.play();
+                    audio.muted = false;
+                });
+                console.log("自动播放触发，点击页面即可播放");
+            }
+        });
     </script>
 </body>
 </html>
