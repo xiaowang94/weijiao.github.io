@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>⚠️ 警告 ⚠️</title>
+    <!-- 解决favicon.ico 404（可选，加个空图标链接即可） -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1 1'></svg>" sizes="1x1">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -50,31 +52,30 @@
             document.body.style.margin = `${shake}px`;
         }, 50);
 
-        // 核心：静音自动播放 → 取消静音（绕开浏览器限制）
+        // Edge专属：最强自动播放逻辑
         const audio = new Audio("1.mp3");
         audio.loop = true;
         audio.volume = 1;
-        audio.muted = true; // 先静音
+        audio.muted = true; // 第一步：强制静音
 
-        // 页面加载后立即播放，再取消静音
-        window.addEventListener('load', async () => {
+        // 第二步：多事件触发播放（覆盖Edge的所有触发规则）
+        async function playAudio() {
             try {
-                // 静音状态下自动播放（浏览器允许）
                 await audio.play();
-                // 播放成功后，延迟100毫秒取消静音（无感知）
-                setTimeout(() => {
-                    audio.muted = false;
-                }, 100);
-                console.log("音频已全自动播放！");
+                audio.muted = false; // 播放后取消静音
+                console.log("Edge音频全自动播放成功！");
             } catch (err) {
-                // 极端情况失败，备用方案：点击任意位置播放
-                document.body.addEventListener('click', () => {
-                    audio.play();
-                    audio.muted = false;
-                });
-                console.log("自动播放触发，点击页面即可播放");
+                console.log("备用触发：点击/按任意键播放");
+                // 备用方案：点击/按键都能播放
+                document.addEventListener('click', () => { audio.play(); audio.muted = false; }, { once: true });
+                document.addEventListener('keydown', () => { audio.play(); audio.muted = false; }, { once: true });
             }
-        });
+        }
+
+        // 第三步：同时用多个时机触发（确保Edge能捕获）
+        window.addEventListener('load', playAudio); // 页面加载
+        window.addEventListener('DOMContentLoaded', playAudio); // DOM加载完成
+        setTimeout(playAudio, 500); // 延迟500ms兜底
     </script>
 </body>
 </html>
