@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⚠️ 警告 ⚠️</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            height: 100vh;
+            background: linear-gradient(45deg, #ff0000, #ffff00, #ff00ff, #00ffff, #ff0000);
+            background-size: 400% 400%;
+            animation: bgShake 0.3s infinite alternate;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            cursor: none;
+        }
+        @keyframes bgShake {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 100% 50%; }
+        }
+        .regret-text {
+            font-size: 120px;
+            font-weight: 900;
+            color: #fff;
+            text-shadow: 
+                0 0 10px #ff0000,
+                0 0 20px #ff0000,
+                0 0 30px #ffff00,
+                0 0 40px #ffff00,
+                0 0 50px #ff00ff;
+            animation: textDance 0.15s infinite alternate;
+            position: relative;
+            z-index: 999;
+        }
+        @keyframes textDance {
+            0% { transform: translate(-5px, -5px) rotate(-2deg) scale(1); }
+            100% { transform: translate(5px, 5px) rotate(2deg) scale(1.1); }
+        }
+    </style>
+</head>
+<body>
+    <div class="regret-text">你太高冷了</div>
+
+    <script>
+      alert("⚠️ 你已经成功触发后悔模式！点击页面任意位置播放音效 ⚠️");
+
+let shake = 0;
+setInterval(() => {
+    shake = shake ? 0 : 5;
+    document.body.style.margin = `${shake}px`;
+}, 50);
+
+// 本地音频（你的文件名是1.mp3，直接用这个）
+const audio = new Audio("1.mp3");
+audio.loop = true;
+audio.volume = 1;
+
+// 核心：点击页面任意位置播放音频（绕过浏览器限制）
+document.body.addEventListener('click', () => {
+    audio.play();
+    alert("音效已播放！后悔来不及了😈");
+});
+    </script>
+</body>
+</html>
